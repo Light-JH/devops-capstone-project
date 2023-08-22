@@ -19,6 +19,7 @@ def health():
     return jsonify(dict(status="OK")), status.HTTP_200_OK
 
 
+
 ######################################################################
 # GET INDEX
 ######################################################################
@@ -62,13 +63,27 @@ def create_accounts():
 ######################################################################
 
 # ... place you code here to LIST accounts ...
-
+@app.route("/accounts")
+def list_accounts():
+    accounts = Account.all()
+    return jsonify(accounts), status.HTTP_200_OK
 
 ######################################################################
 # READ AN ACCOUNT
 ######################################################################
 
 # ... place you code here to READ an account ...
+@app.route("/accounts/<int:account_id>", methods=["GET"])
+def read_account(account_id):
+    account = Account.find(account_id)
+    if not account:
+        abort(status.HTTP_404_NOT_FOUND, f"Account with id [{account_id}] could not be found.")
+    else:
+        message = account.serialize()
+        return message, status.HTTP_200_OK
+        
+
+
 
 
 ######################################################################
