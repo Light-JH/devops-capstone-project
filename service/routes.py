@@ -65,27 +65,23 @@ def create_accounts():
 # ... place you code here to LIST accounts ...
 @app.route("/accounts")
 def list_accounts():
-    account = Account()
-    accounts = account.all()
-    if not accounts:
-        return []
-    message = accounts.serialize()
-    return make_response(
-        jsonify(message), status.HTTP_200_OK)
+    accounts = Account.all()
+    return jsonify(accounts), status.HTTP_200_OK
+
 ######################################################################
 # READ AN ACCOUNT
 ######################################################################
 
 # ... place you code here to READ an account ...
-@app.route("/accounts")
-def read_account(self, id):
-    account = Account()
-    data = account.find(id)
-    if not data:
-        return make_response(status.HTTP_404_NOT_FOUND)
+@app.route("/accounts/<int:account_id>", methods=["GET"])
+def read_account(account_id):
+    account = Account.find(account_id)
+    if not account:
+        abort(status.HTTP_404_NOT_FOUND, f"Account with id [{account_id}] could not be found.")
     else:
-        message = data.sserialize()
-        return make_response(jsonify(message),status.HTTP_200_OK)
+        message = account.serialize()
+        return message, status.HTTP_200_OK
+        
 
 
 
