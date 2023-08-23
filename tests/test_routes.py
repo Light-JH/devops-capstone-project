@@ -14,7 +14,7 @@ from service.models import db, Account, init_db
 from service.routes import app
 from service import talisman
 
-HTTPS_ENVIRON = {'wsgi.url_scheme': 'https'} 
+HTTPS_ENVIRON = {'wsgi.url_scheme': 'https'}
 
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql://postgres:postgres@localhost:5432/postgres"
@@ -125,7 +125,8 @@ class TestAccountService(TestCase):
             json=account.serialize(),
             content_type="test/html"
         )
-        self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
+        self.assertEqual(response.status_code,
+                         status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
     def test_list_accounts(self):
         """it should return list of all accounts if exist"""
@@ -133,7 +134,6 @@ class TestAccountService(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_read_an_account(self):
-
         """It should Read a single Account"""
         # make a call to self.client.post() to create the account
         account = self._create_accounts(1)[0]
@@ -146,11 +146,11 @@ class TestAccountService(TestCase):
         # get the data from resp.get_json()
         data = response.get_json()
         # assert that data["name"] equals the account.name
-        self.assertEqual(data["name"],account.name)
-    
+        self.assertEqual(data["name"], account.name)
+
     def test_security_headers(self):
         """It should return security headers"""
-        response = self.client.get('/',environ_overrides=HTTPS_ENVIRON)
+        response = self.client.get('/', environ_overrides=HTTPS_ENVIRON)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         headers = {
             'X-Frame-Options': 'SAMEORIGIN',
@@ -162,10 +162,9 @@ class TestAccountService(TestCase):
             self.assertEqual(response.headers.get(key), value)
 
     def test_cors_policies(self):
-        response = self.client.get('/',environ_overrides=HTTPS_ENVIRON)
+        response = self.client.get('/', environ_overrides=HTTPS_ENVIRON)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.headers.get('Access-Control-Allow-Origin'), '*')
-
-
+        self.assertEqual(response.headers.get(
+            'Access-Control-Allow-Origin'), '*')
 
     # ADD YOUR TEST CASES HERE ...
