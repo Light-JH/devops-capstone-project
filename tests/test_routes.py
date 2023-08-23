@@ -13,6 +13,8 @@ from service.common import status  # HTTP Status Codes
 from service.models import db, Account, init_db
 from service.routes import app
 
+HTTPS_ENVIRON = {'wsgi.url_scheme': 'https'} 
+
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql://postgres:postgres@localhost:5432/postgres"
 )
@@ -143,7 +145,22 @@ class TestAccountService(TestCase):
         data = response.get_json()
         # assert that data["name"] equals the account.name
         self.assertEqual(data["name"],account.name)
+    
+    def test_security_headers(self):
+        """It should return security headers"""
+        response = self.client.get('/',environ_overrides=HTTPS_ENVIRON)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        headers = {
+            'X-Frame-Options': 'SAMEORIGIN',
+            'X-XSS-Protection': '1; mode=block',
+            'X-Content-Type-Options': 'nosniff',
+            'Content-Security-Policy': 'default-src \'self\'; object-src \'none\'',
+            'Referrer-Policy': 'strict-origin-when-cross-origin'
+        }
+        for key, value in headers.items():
+            self.assertEqual(response.headers.get(key), value)
 
+        
 
 
     # ADD YOUR TEST CASES HERE ...
